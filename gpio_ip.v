@@ -34,18 +34,12 @@ module gpio_ip (
             data_reg <= 32'b0;
             dir_reg  <= 32'b0;
         end
-        else begin
-            if (wr_en) begin
-                case (addr)
-                    8'h00: data_reg <= wdata; // DATA register
-                    8'h04: dir_reg  <= wdata; // DIR register
-                    default: begin
-                        // No write, hold value
-                        data_reg <= data_reg;
-                        dir_reg  <= dir_reg;
-                    end
-                endcase
-            end
+        else if (wr_en) begin
+            case (addr)
+                8'h00: data_reg <= wdata; // DATA register
+                8'h04: dir_reg  <= wdata; // DIR register
+                default: ;                // hold value
+            endcase
         end
     end
 
