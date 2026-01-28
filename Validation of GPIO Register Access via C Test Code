@@ -1,0 +1,51 @@
+Test Case 1: GPIO Write–Read Consistency Test
+Checks whether values written to GPIO can be read back correctly.
+
+#include <stdint.h>
+
+#define UART_TX   (*(volatile unsigned int*)0x00400000)
+#define GPIO_ADDR (*(volatile unsigned int*)0x20000000)
+
+void putuartchar(char c) {
+    UART_TX = c;
+}
+
+void print_str(const char *s) {
+    while (*s) {
+        putuartchar(*s++);
+    }
+}
+
+void print_uint(unsigned int x) {
+    char buf[10];
+    int i = 0;
+
+    if (x == 0) {
+        putuartchar('0');
+        return;
+    }
+
+    while (x > 0) {
+        buf[i++] = '0' + (x % 10);
+        x /= 10;
+    }
+
+    while (i--) putuartchar(buf[i]);
+}
+
+int main() {
+    unsigned int value;
+
+    for (int i = 1; i <= 5; i++) {
+        GPIO_ADDR = i * 10;     // Write
+        value = GPIO_ADDR;     // Read back
+
+        print_str("Written Value: ");
+        print_uint(i * 10);
+        print_str(" Read Value: ");
+        print_uint(value);
+        putuartchar('\n');
+    }
+
+    return 0;
+}
