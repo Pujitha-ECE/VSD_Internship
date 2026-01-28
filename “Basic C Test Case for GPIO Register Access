@@ -1,0 +1,18 @@
+GPIO Write and Read-Back Test
+Writes data and immediately reads it back.
+
+#include <stdint.h>
+
+#define GPIO_ADDR (*(volatile unsigned int*)0x20000000)
+
+int main() {
+    unsigned int read_val = 0;
+
+    for (int i = 0; i < 5; i++) {
+        GPIO_ADDR = 50 + i;     // Write
+        read_val = GPIO_ADDR;  // Read back
+    }
+
+    return 0;
+}
+
